@@ -26,15 +26,17 @@ public class TestDownloadStream {
 //                RandomAccessFile input = new RandomAccessFile("D:\\迅雷下载\\zh-cn_windows_10.iso", "R");
                 RandomAccessFile out = new RandomAccessFile("C:\\Users\\DELL\\Desktop\\zypt.sql", "rw")) {
             jedis.set("size", input.length() + "");
-            while (i != -1) {
+            while (true) {
                 //确定指针读取到哪里了,如果是第一次读，肯定 从redis中获取到的是一个空的
                 input.seek(Long.valueOf(jedis.get("position") == null ? "0" : jedis.get("position")));
                 out.seek(Long.valueOf(jedis.get("position") == null ? "0" : jedis.get("position")));
                 //读取字节到buff中,i可以真实的描述字节读取了多少
                 i = input.read(buff);
-                out.write(buff);
+                if(i==-1)break;
+                //一定要填i 写入长度，否则有可能回 将 bytes多余的字节信息 写到文件里面
+                out.write(buff, 0, i);
                 //当读取完与写入完毕后，偏移指针
-                jedis.set("position", jedis.get("position") == null ? i + "" : jedis.get("position") + i + "");
+                jedis.set("position", jedis.get("position") == null ? i + "" : Long.valueOf(jedis.get("position")) + i + "");
 //                break;
             }
             if (i == -1) {
