@@ -10,7 +10,7 @@ Vue.use(VueRouter);
  */
 function initRouter(isAsync) {
     const options = isAsync ? require('./map/router.async.map.js').default : require('./map/router.map.js').default
-    return new Router(options)
+    return new VueRouter(options)
 }
 
 
