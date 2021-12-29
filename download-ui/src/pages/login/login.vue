@@ -90,8 +90,7 @@ export default {
     return {
       userInfo: {
         username: "",
-        password: "",
-        role: "0"
+        password: ""
       },
       loginMethods: [
         { name: "扫码登录" },
@@ -131,7 +130,7 @@ export default {
     },
     // 登录前做基础校验，校验通过做登录操作
     hLogin() {
-      let { username, password, role} = this.userInfo;
+      let { username, password} = this.userInfo;
       if (username == '' || password == '') {
         this.$message({
           type: "info",
@@ -147,15 +146,14 @@ export default {
         });
         return;
       }
-      this.doLogin(username, password, role);
+      this.doLogin(username, password);
     },
     // 调用接口，做登录操作
-    doLogin(username, password, role) {
+    doLogin(username, password) {
       let { rememberPassword } = this;
       let data = {
         username,
-        password,
-        role
+        password
       };
       this.postKnow(this.api.login, data).then((res) => {
         if (res.data.code === 200) {
@@ -172,7 +170,6 @@ export default {
           this.$store.dispatch('setUserInfo');
           sessionStorage.setItem("userId", res.data.data.id);
           sessionStorage.setItem("token", res.data.data.token);
-          sessionStorage.setItem("myClass", JSON.stringify(res.data.data.classList));
           username = '';
           password = '';
           this.$router.replace("/index");
@@ -210,7 +207,6 @@ export default {
         }
         this.rememberPassword = true;
       }
-      this.userInfo.role = "0";
     },
     // 清除Cookie
     clearCookie() {

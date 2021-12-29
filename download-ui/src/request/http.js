@@ -4,15 +4,20 @@ import Qs from "qs";
 import router from "../router";
 
 // 李晓 http://172.16.18.171:8082
-axios.defaults.baseURL = "http://127.0.0.1:8080";
+axios.defaults.baseURL = "";
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 // 请求拦截
 axios.interceptors.request.use(
 	config => {
+		console.log(config)
+
 		if (!config.headers.noConfigToken) {
 			config.headers.Authorization = sessionStorage.getItem('token') || '';
 		}
+		// config.headers.("Access-Control-Allow-Headers", "X-Requested-With");
+		// config.headers("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+		console.log(config)
 		return config;
 	},
 	error => {

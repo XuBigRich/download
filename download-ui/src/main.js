@@ -1,17 +1,26 @@
 import Vue from 'vue'
 import App from './App.vue'
-import initRouter from './router'
+import ElementUI from "element-ui";
+
 import EchojoyMessage from '@/components/public/message.js'
 import api from "./request/api";
 import store from "./store";
 Vue.prototype.api = api;
 Vue.prototype.$message = EchojoyMessage;
 
+
+// import router from './router'
+
+import initRouter from './router'
+console.log(initRouter)
 const router = initRouter(false)
+console.log(router)
 Vue.config.productionTip = false
 
+Vue.use(ElementUI);
+
 new Vue({
-    render: h => h(App),
-    store,
     router,
+    store,
+    render: h => h(App)
 }).$mount('#app')
