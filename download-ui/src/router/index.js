@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
-Vue.use(VueRouter);
+
 
 /**
  * 初始化路由实例
@@ -9,11 +9,12 @@ Vue.use(VueRouter);
  * @returns {VueRouter}
  */
 function initRouter(isAsync) {
+    console.log(isAsync)
     const options = isAsync ? require('./map/router.async.map.js').default : require('./map/router.map.js').default
-    return new VueRouter(options)
+    return new VueRouter({options})
 }
 
-
+Vue.use(VueRouter);
 
 
 export default initRouter;

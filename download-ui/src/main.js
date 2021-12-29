@@ -7,7 +7,7 @@ import store from "./store";
 Vue.prototype.api = api;
 Vue.prototype.$message = EchojoyMessage;
 
-const router = initRouter(true)
+const router = initRouter(false)
 Vue.config.productionTip = false
 
 new Vue({
