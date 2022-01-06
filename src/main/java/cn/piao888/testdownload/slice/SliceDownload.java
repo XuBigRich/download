@@ -42,7 +42,7 @@ public class SliceDownload {
         try {
             //获取目标文件 预分配文件所占的空间 在磁盘中创建一个指定大小的文件   r 是只读
             raf = new RandomAccessFile(new File(file), "r");
-            long length = raf.length();//文件的总长度
+            long length = raf.length();//文件的总长度 以字节为单位。
 //            long maxSize = SplitFileParam.maxSize;//文件切片后的长度
 //            long count = length / maxSize; //文件分割的份数
             long count = SplitFileParam.count;
