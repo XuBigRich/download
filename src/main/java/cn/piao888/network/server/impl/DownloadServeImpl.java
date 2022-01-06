@@ -1,12 +1,16 @@
 package cn.piao888.network.server.impl;
 
 import cn.piao888.network.config.DownloadProperties;
+import cn.piao888.network.domain.bo.UploadBO;
 import cn.piao888.network.exception.GlobalException;
 import cn.piao888.network.server.DownloadServe;
+import cn.piao888.testdownload.redis.ConnectRedis;
+import cn.piao888.testdownload.slice.SliceDownload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +24,7 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Author： hongzhi.xu
@@ -30,6 +35,7 @@ import java.nio.file.Paths;
 public class DownloadServeImpl implements DownloadServe {
     @Autowired
     private DownloadProperties downloadProperties;
+    public static AtomicInteger atomicInteger = new AtomicInteger(0);
 
     @Override
     public void downLoad(String fileName) throws Exception {
@@ -56,5 +62,27 @@ public class DownloadServeImpl implements DownloadServe {
         fileChannel.transferTo(0, fileChannel.size(), writableByteChannel);
         fileChannel.close();
         fileInputStream.close();
+    }
+
+    @Override
+    public void upload(UploadBO uploadBO) {
+        String tmpFileName = uploadBO.getFile().getOriginalFilename();
+        try (InputStream inputStream = uploadBO.getFile().getInputStream()) {
+            File file = new File(downloadProperties.getProfile() + uploadBO.getMd5());
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            Files.copy(inputStream, Paths.get(file.toURI().getPath() + "/" + tmpFileName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        Jedis jedis = ConnectRedis.getJedis();
+//        Long count = jedis.incr(uploadBO.getMd5());
+        atomicInteger.getAndIncrement();
+        if (uploadBO.getTotalChunks().equals(atomicInteger.get())) {
+            //要保存的文件 绝对路径
+            String file = downloadProperties.getProfile() + "/" + uploadBO.getMd5() + "/" + uploadBO.getFilename();
+            SliceDownload.merge(file, file, atomicInteger.get());
+        }
     }
 }

@@ -1,24 +1,9 @@
-# download-ui
+### 路由知识的学习
 
-## Project setup
-```
-yarn install
-```
+### 权限模块的学习
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+### 前端文件分片的学习
 
-### Compiles and minifies for production
-```
-yarn build
-```
+###  multipart/from-data 的上传
 
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Blob 构建一个 File对象

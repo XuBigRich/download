@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
- * 断点续传 经过思考 ，只能使用RandomAccessFile
+ * 断点续传 经过思考 ，只能使用RandomAccessFile  (仅限后端，整体文件复制时)
+ *
+ * 前端的分片 断点续传 是根据分片 跳过解决的。
  *
  * @author 许鸿志
  * @since 2021/10/28

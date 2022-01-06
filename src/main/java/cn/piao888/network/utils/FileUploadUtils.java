@@ -3,12 +3,14 @@ package cn.piao888.network.utils;
 import cn.piao888.network.constant.MimeTypeUtils;
 import cn.piao888.network.exception.GlobalException;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+
 /**
  * 验证是否支持此文件类型
+ *
  * @Author： hongzhi.xu
  * @Date: 2021/12/22 10:20 下午
  * @Version 1.0
@@ -56,4 +58,5 @@ public class FileUploadUtils {
         }
         return extension;
     }
+
 }

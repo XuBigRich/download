@@ -6,26 +6,6 @@ import VueRouter from "vue-router";
 
 
 Vue.use(VueRouter);
-// const routes = [
-//     {
-//         path: "/",
-//         redirect: '/login'
-//     },
-//     {
-//         path: "/login",
-//         name: '登录', // 页面从定向到首页
-//         component: () => import("@/pages/login/login")
-//     },
-//     {
-//         path: "/index",
-//         name: '首页', // 页面从定向到首页
-//         component: () => import("@/pages/index/index.vue")
-//     }
-// ]
-
-
-// const  router = new VueRouter({routes});
-// export default router;
 
 /**
  * 初始化路由实例

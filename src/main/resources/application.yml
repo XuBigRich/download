@@ -4,7 +4,9 @@ mybatis:
   mapper-locations: classpath:mapper/*.xml
 spring:
   servlet:
+    # 如果要springboot 的 Bo可以接收multipart/from-data 参数 ，下面的方法必须配置
     multipart:
-      enabled: false
+      max-file-size: 1024MB
+      enabled: true
 download:
   profile: /Users/xuhongzhi/Downloads/uploadPath/

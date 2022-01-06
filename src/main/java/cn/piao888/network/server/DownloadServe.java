@@ -1,5 +1,7 @@
 package cn.piao888.network.server;
 
+import cn.piao888.network.domain.bo.UploadBO;
+
 import java.io.IOException;
 
 /**
@@ -9,4 +11,6 @@ import java.io.IOException;
  */
 public interface DownloadServe {
     void downLoad(String fileName) throws Exception;
+
+    void upload(UploadBO uploadBO);
 }

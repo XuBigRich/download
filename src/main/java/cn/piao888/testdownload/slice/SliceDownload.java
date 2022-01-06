@@ -7,10 +7,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 /**
- * 完美分割一整个文件
+ * 完美分割一整个文件  ,然后合并
  * 如果是web服务，分割工作由前端完成
- *
+ * <p>
  * 使用Files 与Paths进行文件的读取复制
+ *
  * @Author： hongzhi.xu
  * @Date: 2021/11/6 10:51 上午
  * @Version 1.0
@@ -18,20 +19,21 @@ import java.nio.file.StandardOpenOption;
 public class SliceDownload {
 
     public static void main(String[] args) throws IOException {
-        //首先分割文件
+        //首先分割文件 得到文件分割的份数
         getSplitFile();
         String file = SplitFileParam.file; //文件的路径
-        RandomAccessFile raf = null;
-        raf = new RandomAccessFile(new File(file), "r");
+        RandomAccessFile raf  = new RandomAccessFile(new File(file), "r");
         long length = raf.length();//文件的总长度
         long maxSize = SplitFileParam.maxSize;//文件切片后的长度
         long count = length / maxSize; //文件分割的份数
         merge(SplitFileParam.outfile, SplitFileParam.file, 16);
-        remove(SplitFileParam.outfile, SplitFileParam.file, 16);
+//        remove(SplitFileParam.outfile, SplitFileParam.file, 16);
     }
 
     /**
-     * 文件分割方法
+     * 文件分割方法。
+     * 这里是固定分割几个文件，
+     * 但在实际业务中，是需要根据 每个分片大小去确定需要分割成几个文件的。
      */
     public static void getSplitFile() {
         String file = SplitFileParam.file; //文件的路径
@@ -44,7 +46,7 @@ public class SliceDownload {
 //            long maxSize = SplitFileParam.maxSize;//文件切片后的长度
 //            long count = length / maxSize; //文件分割的份数
             long count = SplitFileParam.count;
-            long maxSize = length / count; //文件分割的份数
+            long maxSize = length / count; //被分割后每个文件的大小
             long offSet = 0L;//初始化偏移量
             for (long i = 0; i < count; i++) { //最后一片单独处理  我这样计算出来的 count  本身  就是 吧 最后一片 除掉的
                 long begin = offSet;
@@ -52,7 +54,9 @@ public class SliceDownload {
 //                offSet = writeFile(file, begin, end, i);
                 offSet = getWrite(file, i, begin, end);
             }
+            //文件大小 减去最终偏移量 计算 还剩多少没有分割
             if (length - offSet > 0) {
+                //给他割出来
                 getWrite(file, count, offSet, length);
             }
 
@@ -88,7 +92,6 @@ public class SliceDownload {
             RandomAccessFile in = new RandomAccessFile(new File(file), "r");
             //定义一个可读，可写的文件并且后缀名为.tmp的二进制文件
             RandomAccessFile out = new RandomAccessFile(new File(sourceFileName + "_" + i + ".tmp"), "rw");
-
             //申明具体每一文件的字节数组
             byte[] b = new byte[1024];
             int n = 0;
@@ -134,19 +137,21 @@ public class SliceDownload {
     /**
      * 文件合并
      *
-     * @param file     指定合并文件
-     * @param tempFile 分割前的文件名
+     * @param file     指定合并文件（输出文件） 的绝对路径
+     * @param tempFile 输入的文件（原文件"不是分割文件"） 的绝对路径
      * @param count    文件个数
      */
     public static void merge(String file, String tempFile, long count) {
         String sourceFileName = tempFile.split("\\.")[0];
         try {
+            //获取
             Files.createFile(Paths.get(file));
             //开始合并文件，对应切片的二进制文件
             for (int i = 0; i < count; i++) {
                 //读取切片文件
                 Path path = Paths.get(sourceFileName + "_" + i + ".tmp");
-                Files.write(Paths.get(SplitFileParam.outfile), Files.readAllBytes(path), StandardOpenOption.APPEND);
+                //将文件输出到SplitFileParam.outfile，挨个读取path临时文件
+                Files.write(Paths.get(file), Files.readAllBytes(path), StandardOpenOption.APPEND);
             }
         } catch (Exception e) {
             e.printStackTrace();

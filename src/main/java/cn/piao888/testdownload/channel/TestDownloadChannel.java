@@ -7,6 +7,9 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+/**
+ * 通过通道复制文件
+ */
 public class TestDownloadChannel {
     public static Jedis jedis = ConnectRedis.getJedis();
     static ByteBuffer buff = ByteBuffer.allocate(1024);
