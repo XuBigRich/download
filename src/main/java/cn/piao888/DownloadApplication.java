@@ -1,4 +1,4 @@
-package cn.piao888.network;
+package cn.piao888;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

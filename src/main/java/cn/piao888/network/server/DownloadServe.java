@@ -12,5 +12,5 @@ import java.io.IOException;
 public interface DownloadServe {
     void downLoad(String fileName) throws Exception;
 
-    void upload(UploadBO uploadBO);
+    void upload(UploadBO uploadBO) throws Exception;
 }

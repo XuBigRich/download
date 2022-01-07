@@ -33,7 +33,7 @@ public class UploadBO {
     /**
      * 总切片数
      */
-    private Integer totalChunks;
+    private Long totalChunks;
     /**
      * 文件大小
      */

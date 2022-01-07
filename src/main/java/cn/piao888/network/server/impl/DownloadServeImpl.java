@@ -5,6 +5,8 @@ import cn.piao888.network.domain.bo.UploadBO;
 import cn.piao888.network.exception.GlobalException;
 import cn.piao888.network.server.DownloadServe;
 import cn.piao888.testdownload.redis.ConnectRedis;
+import cn.piao888.testdownload.redis.RedisConnectPool;
+import cn.piao888.testdownload.redis.RedisConnectPoolImpl;
 import cn.piao888.testdownload.slice.SliceDownload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +37,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DownloadServeImpl implements DownloadServe {
     @Autowired
     private DownloadProperties downloadProperties;
-    public static AtomicInteger atomicInteger = new AtomicInteger(0);
+    private RedisConnectPool redisConnectPool;
+
+    {
+        redisConnectPool = new RedisConnectPoolImpl.Builder().build();
+    }
+
 
     @Override
     public void downLoad(String fileName) throws Exception {
@@ -65,7 +72,7 @@ public class DownloadServeImpl implements DownloadServe {
     }
 
     @Override
-    public void upload(UploadBO uploadBO) {
+    public void upload(UploadBO uploadBO) throws Exception {
         String tmpFileName = uploadBO.getFile().getOriginalFilename();
         try (InputStream inputStream = uploadBO.getFile().getInputStream()) {
             File file = new File(downloadProperties.getProfile() + uploadBO.getMd5());
@@ -76,13 +83,15 @@ public class DownloadServeImpl implements DownloadServe {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        Jedis jedis = ConnectRedis.getJedis();
-//        Long count = jedis.incr(uploadBO.getMd5());
-        atomicInteger.getAndIncrement();
-        if (uploadBO.getTotalChunks().equals(atomicInteger.get())) {
+        Jedis jedis = redisConnectPool.getResource();
+        Long count = jedis.incr(uploadBO.getMd5());
+        jedis.expire(uploadBO.getMd5(), 20);
+        if (uploadBO.getTotalChunks().equals(count)) {
             //要保存的文件 绝对路径
             String file = downloadProperties.getProfile() + "/" + uploadBO.getMd5() + "/" + uploadBO.getFilename();
-            SliceDownload.merge(file, file, atomicInteger.get());
+            SliceDownload.merge(file, file, Long.parseLong(jedis.get(uploadBO.getMd5())));
+            SliceDownload.remove(file, file, Long.parseLong(jedis.get(uploadBO.getMd5())));
         }
+        redisConnectPool.release(jedis);
     }
 }

@@ -125,7 +125,7 @@ public class SliceDownload {
 
     public static void remove(String file, String tempFile, long count) {
         String sourceFileName = tempFile.split("\\.")[0];
-        for (int i = 0; i <= count; i++) {
+        for (int i = 0; i < count; i++) {
             try {
                 Files.delete(Paths.get(sourceFileName + "_" + i + ".tmp"));
             } catch (IOException e) {
