@@ -35,7 +35,7 @@ public class RedisConnectPoolImpl implements RedisConnectPool {
 
     private static Jedis createJedis() {
         Jedis jedis = new Jedis("localhost");
-        jedis.auth("Kshanp8848");
+        jedis.auth("123456");
         return jedis;
     }
 
